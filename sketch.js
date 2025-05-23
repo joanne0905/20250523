@@ -9,18 +9,20 @@ function setup() {
     (windowHeight - 480) / 2
   );
   video = createCapture(VIDEO);
-  video.size(640, 480);
+  video.size(width, height);
   video.hide();
 
-  facemesh = ml5.faceMesh(video, gotResults); // 直接把 gotResults 當 callback
+  facemesh = ml5.faceMesh(video, modelReady); 
+  facemesh.on('predict', results => {
+    predictions = results;
+  });
 }
 
-function gotResults(results) {
-  predictions = results;
+function modelReady() {
+  // 模型載入完成，可選擇顯示訊息
 }
-
 function draw() {
-  background(220);
+  
   image(video, 0, 0, width, height);
 
   if (predictions.length > 0) {
@@ -28,12 +30,12 @@ function draw() {
     stroke(255, 0, 0);
     strokeWeight(15);
     noFill();
-    for (let i = 0; i < indices.length - 1; i++) {
-      let idxA = indices[i];
-      let idxB = indices[i + 1];
-      let [x1, y1] = keypoints[idxA];
-      let [x2, y2] = keypoints[idxB];
-      line(x1, y1, x2, y2);
+    beginShape();
+    for (let i = 0; i < indices.length; i++) {
+      const idx = indices[i];
+      const [x, y] = keypoints[idx];
+      vertex(x, y);
     }
+    endShape();
   }
 }
