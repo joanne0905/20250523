@@ -12,12 +12,7 @@ function setup() {
   video.size(640, 480);
   video.hide();
 
-  facemesh = ml5.faceMesh(video, modelReady); // 注意這裡改成 faceMesh
-  facemesh.on("predict", gotResults);
-}
-
-function modelReady() {
-  // 模型載入完成
+  facemesh = ml5.faceMesh(video, gotResults); // 直接把 gotResults 當 callback
 }
 
 function gotResults(results) {
